@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Neighborhood Map</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="Interesting points around my area">
+	<script src="https://use.fontawesome.com/7175fcba3a.js"></script>
+	<link href="https://fonts.googleapis.com/css?family=Quicksand:300" rel="stylesheet">
+	<link rel="stylesheet"  href="css/main.css">
+</head>
+<body class="menu-hidden">
+	<header>
+		<nav class="navigation">
+			<h2>Greenwich</h2>
+			<span><i class="fa fa-bars fa-lg fa-border" aria-hidden="true" data-bind="click:toggleMenu"></i></span>
+		</nav>
+	</header>
+	<div class="slide-menu">
+		<form class="form">
+			<input type="search" name="place" placeholder="Search a place"  data-bind="textInput:inputPlace, event: {focus: reset}">
+			<a class="btn" id="filter" href="#" data-bind="click:filter">
+				<i class="fa fa-filter" aria-hidden="true"></i>Filter
+			</a>
+		</form>
+		<div >
+			<ul id="list-view" data-bind="foreach:selectedPlaces" >
+				<li data-bind="text:place"></li>
+			</ul>
+		</div>
+	</div>
+	<div id='map'></div>
+	<script src="js/jquery.js"></script>
+	<script src="js/app.js"></script>	
+	<script src="js/knockout-3.4.2.js"></script>
+	<script async="true" defer
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6HskZFRH3OIhfHKfvExLJgB4RHXfCGcU&libraries=geometry,drawing,places&v=3&callback=initMap">	
+	</script>
+	<script type="text/javascript">ko.applyBindings(new appViewModel());</script>
+
+</body>
+</html>
