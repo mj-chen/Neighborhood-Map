@@ -13,10 +13,13 @@ const Model ={
 			{place:"Island Gardens Park",coor:{lat:51.486911,lng:-0.008402}},
 			{place:"Pure Gym", coor:{lat:51.476164,lng:-0.018393}}
 		],
+    /* Array to store the markers */
 	markers:[],
+    /*== asychronous API Requests to Fousquare API ==*/
 	getInfo: function(position,win,mar){
 		win.setMap(null);
 		Model.content = "";
+		/*== First request to get the place ID ==*/
 		$.ajax({
 			method:"GET",
 			url:"https://api.foursquare.com/v2/venues/search",
@@ -28,7 +31,8 @@ const Model ={
     			limit:1
 			},
 			success: function(response,status) {
-				if (response.response.venues[0].id){           
+				if (response.response.venues[0].id){  
+				    /*== Second request to get detailed information with place ID==*/            
 					$.ajax({
 						method:'GET',
 						url:'https://api.foursquare.com/v2/venues/'+ response.response.venues[0].id,
@@ -102,27 +106,27 @@ const Model ={
 		            msg += 'Uncaught Error.\n' + jqXHR.responseJSON.meta.errorDetail + textStatus;
 		        }
 		        alert(msg);
-		        console.log(textStatus);
 			}
 		});
 	},
 	content:"",
-	window:[]
+	/*== an object for containing the unique infowindow created in google map ==*/
+	window:{}
 };
 
 function appViewModel(){
 	let self = this;
-
+	/*== hide or show the list view ==*/
 	self.toggleMenu = function(){
 		$('body').toggleClass('menu-hidden');
 	};
-
+	/*== store the input string typed by users ==*/
 	self.inputPlace = ko.observable();
-
+	/*== the places displayed in the list view ==*/
 	self.selectedPlaces = ko.observableArray(Model.places);
-
+    /*== the marker matching the clicked location name==*/
 	self.currentmarker;
-
+	/*== update the list view and markers in real time at each keystroke ==*/
 	self.search = function(data,event){
 		if(event.key === 'Backspace'){
 			self.reset();
@@ -134,7 +138,7 @@ function appViewModel(){
 		}
 	   	return true;
 	};
-
+    /*== filter the list view and markers when user type the name of place ==*/
 	self.filter = function(){
 		let temp = [];
 		let searchedplace = self.inputPlace();
@@ -146,44 +150,32 @@ function appViewModel(){
 					temp.push(place);
 				}
 			}
-			self.selectedPlaces(temp);
-			self.updateMarkers(Model.markers, self.selectedPlaces());
+		self.selectedPlaces(temp);
+		self.updateMarkers(Model.markers, self.selectedPlaces());
 	};
-
+    /*== reset the list view and markers when user press backspace button ==*/
 	self.reset = function(){
-		console.log('back');
 		self.selectedPlaces(Model.places);
 		self.filter();
 		map.setCenter({lat:51.48, lng:-0.00});
 		map.setZoom(15);
+		map.fitBounds()
 	};
-
+    /*== zoom in to the selected place ==*/
 	self.zoom = function(){
 		let latlng = self.selectedPlaces()[0].coor;
-		console.log(latlng);
 		map.setCenter(latlng);
 		map.setZoom(18);
 	};
-
-	self.standardString = function(string){
-		let stringArray = string.toLowerCase().split(" ");
-		stringArray.forEach((string,index) => {
-			let smallArray = string.split("");
-			smallArray.splice(0,1,smallArray[0].toUpperCase());
-			stringArray.splice(index,1,smallArray.join(""));
-		});
-		return stringArray;
-	};
-
+    /*== update list view and marker, open the infowindow when user click the list view ==*/
 	self.defineSelectedPlace = function(place){
 		self.selectedPlaces([place]);
 		self.inputPlace(place.place);
 		self.updateMarkers(Model.markers, self.selectedPlaces());
 		self.animateMarkers(Model.markers);
-		console.log(self.currentmarker);
-		Model.getInfo(self.currentmarker.getPosition(),Model.window[0],self.currentmarker);
+		Model.getInfo(self.currentmarker.getPosition(),Model.window,self.currentmarker);
 	};
-
+    /*== create markers ==*/
 	self.makeMarkers = function(markerArray,placeArray){
 		Model.places.forEach(place=>{
 			let marker = new google.maps.Marker({
@@ -194,7 +186,7 @@ function appViewModel(){
 			markerArray.push(marker);
 		});
 	};
-
+    /*== filter and change visibility of markers according to the search result ==*/
 	self.updateMarkers = function(markerArray,selectedPlacesArray){
 		markerArray.forEach(marker=>marker.setMap(null));
 		for(let i=0; i<selectedPlacesArray.length; i++){
@@ -249,17 +241,22 @@ function initMap(){
 
 	new appViewModel().makeMarkers(Model.markers, Model.places);
 
-	Model.window.push(new google.maps.InfoWindow());
+    /*== create an infowindow and put it in the window array in Model ==*/
+	Model.window = new google.maps.InfoWindow();
 
+    /*== add handlers for events in map ==*/
 	Model.markers.forEach(marker =>{
 		bounds.extend(marker.position);
+		/*== a click in the marker will animate the marker and open an infowindow ==*/
 		marker.addListener('click', function(){
 			marker.setAnimation(google.maps.Animation.BOUNCE);
-			Model.getInfo(marker.getPosition(),Model.window[0],marker);
+			Model.getInfo(marker.getPosition(),Model.window,marker);
 		});
+		/*== mouseout will stop the animation==*/
 		marker.addListener('mouseout', function(){
 			this.setAnimation(null);
 		});
 		map.fitBounds(bounds);
 	});
 }
+
