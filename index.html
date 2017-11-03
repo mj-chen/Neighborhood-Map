@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta name="description" content="Interesting points around my area">
 	<script src="https://use.fontawesome.com/7175fcba3a.js"></script>
-	<link href="https://fonts.googleapis.com/css?family=Quicksand:300" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Quicksand:300,700" rel="stylesheet">
 	<link rel="stylesheet"  href="css/main.css">
 </head>
 <body class="menu-hidden">
@@ -18,14 +18,14 @@
 	</header>
 	<div class="slide-menu">
 		<form class="form">
-			<input type="search" name="place" placeholder="Search a place"  data-bind="textInput:inputPlace, event: {focus: reset}">
-			<a class="btn" id="filter" href="#" data-bind="click:filter">
-				<i class="fa fa-filter" aria-hidden="true"></i>Filter
+			<input type="text" name="place" placeholder="Search a place"  data-bind="textInput: inputPlace, event:{keyup: search}">
+			<a class="btn" id="filter" href="#" data-bind="click:zoom">
+				<i class="fa fa-search-plus" aria-hidden="true"></i>Zoom
 			</a>
 		</form>
 		<div >
 			<ul id="list-view" data-bind="foreach:selectedPlaces" >
-				<li data-bind="text:place"></li>
+				<li data-bind="text:place, click: $parent.defineSelectedPlace"></li>
 			</ul>
 		</div>
 	</div>
