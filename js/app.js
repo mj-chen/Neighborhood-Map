@@ -17,7 +17,6 @@ const Model ={
 	getInfo: function(position,win,mar){
 		win.setMap(null);
 		Model.content = "";
-		//win.setContent("");
 		$.ajax({
 			method:"GET",
 			url:"https://api.foursquare.com/v2/venues/search",
@@ -29,7 +28,6 @@ const Model ={
     			limit:1
 			},
 			success: function(response,status) {
-				console.log(response);
 				if (response.response.venues[0].id){           
 					$.ajax({
 						method:'GET',
@@ -72,9 +70,9 @@ const Model ={
 							}
 							if (venue.bestPhoto) {
 								let url = venue.bestPhoto.prefix + '300x300' + venue.bestPhoto.suffix;
-								Model.content += `<img src="${url}">`
+								Model.content += `<img src="${url}">`;
 							}
-							Model.content += `<p><img src="img/foursquare.png"> <span style="color:blue;font-weight:900;font-size:1.2em;">Foursquare<span> <p></div>`
+							Model.content += `<p><img src="img/foursquare.png"><span style="color:blue;font-weight:900;font-size:1.2em;">Foursquare<span><p></div>`;
 							win.setContent(Model.content);
 							win.open(map,mar);
 						},
@@ -114,14 +112,18 @@ const Model ={
 
 function appViewModel(){
 	let self = this;
+
 	self.toggleMenu = function(){
 		$('body').toggleClass('menu-hidden');
 	};
+
 	self.inputPlace = ko.observable();
+
 	self.selectedPlaces = ko.observableArray(Model.places);
+
 	self.currentmarker;
+
 	self.search = function(data,event){
-		
 		if(event.key === 'Backspace'){
 			self.reset();
 		}else {
@@ -149,19 +151,19 @@ function appViewModel(){
 	};
 
 	self.reset = function(){
-		console.log('back')
+		console.log('back');
 		self.selectedPlaces(Model.places);
 		self.filter();
 		map.setCenter({lat:51.48, lng:-0.00});
 		map.setZoom(15);
-	}
+	};
 
 	self.zoom = function(){
 		let latlng = self.selectedPlaces()[0].coor;
-		console.log(latlng)
+		console.log(latlng);
 		map.setCenter(latlng);
 		map.setZoom(18);
-	}
+	};
 
 	self.standardString = function(string){
 		let stringArray = string.toLowerCase().split(" ");
@@ -169,7 +171,7 @@ function appViewModel(){
 			let smallArray = string.split("");
 			smallArray.splice(0,1,smallArray[0].toUpperCase());
 			stringArray.splice(index,1,smallArray.join(""));
-		})
+		});
 		return stringArray;
 	};
 
@@ -214,12 +216,13 @@ function appViewModel(){
 				marker.setAnimation(google.maps.Animation.BOUNCE);
 			}
 		});
-	}
-};
+	};
+}
 
 let map;
 function initMap(){
 	let greenwich = new google.maps.LatLng(51.48, -0.00);
+
 	let mapOptions = {
 		center: greenwich,
 		zoom:15,
@@ -239,10 +242,15 @@ function initMap(){
 		},
 		fullscreenControl:true
 	};
+
 	map = new google.maps.Map(document.querySelector('#map'), mapOptions);
+
 	let bounds = new google.maps.LatLngBounds();
+
 	new appViewModel().makeMarkers(Model.markers, Model.places);
+
 	Model.window.push(new google.maps.InfoWindow());
+
 	Model.markers.forEach(marker =>{
 		bounds.extend(marker.position);
 		marker.addListener('click', function(){
@@ -251,7 +259,7 @@ function initMap(){
 		});
 		marker.addListener('mouseout', function(){
 			this.setAnimation(null);
-		})
+		});
 		map.fitBounds(bounds);
-	})
-};
+	});
+}
