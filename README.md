@@ -2,9 +2,9 @@ App overview - what is it?
 	Neighborhood Map APP is a single page application featuring a map of Greenwich in London and listing some interesting places to visit in this neighborhood such as restaurant, gym, attraction and leisure park. It allows you to easily and quickly know Greenwich neighborhood and obtain detailed information about various places you are interested in. You save time by not needing to search information from many different sites. It can be used in both your PC and smartphone. 
 
 APP installation - how to get it?
-	. Either download or clone a zip of this repository at https://github.com/mj-chen/Neighborhood-Map.
-	. Navigate to the cloned/downloaded directory.
-	. Simply open index.html with your favorite browser and it will be ready to use.
+	. Either download or clone a zip of this repository at https://github.com/mj-chen/Neighborhood-Map
+	. Open up a terminal, navigate to the cloned/downloaded directory and type "$ python -m SimpleHTTPServer"
+	. Simply open your favorite browser and type the following address http://127.0.0.1:8000
 
 APP functions - how to use it?
 	. The application will load by default a Google map with a bunch of markers indicating all the interesting places in Greewich. 

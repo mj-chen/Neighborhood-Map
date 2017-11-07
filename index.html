@@ -31,12 +31,12 @@
 	</div>
 	<div id='map'></div>
 	<script src="js/jquery.js"></script>
-	<script src="js/app.js"></script>	
 	<script src="js/knockout-3.4.2.js"></script>
-	<script async="true" defer
-		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6HskZFRH3OIhfHKfvExLJgB4RHXfCGcU&libraries=geometry,drawing,places&v=3&callback=initMap">	
+	<script src="js/data.json"></script>
+	<script src="js/app.js"></script>
+	<script 
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6HskZFRH3OIhfHKfvExLJgB4RHXfCGcU&libraries=geometry,drawing,places&v=3&callback=initMap" 
+		async defer onerror="mapError(event)">	
 	</script>
-	<script type="text/javascript">ko.applyBindings(new appViewModel());</script>
-
 </body>
 </html>
