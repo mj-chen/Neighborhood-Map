@@ -38,16 +38,7 @@ function mapError(event){
 	alert(message);
 	console.log(event);
 }	
-
-/*== Try to ensure that this function won't be executed before the google map and DOM is ready as this function depends on google map,
- but I don't know if I did it correctly==*/
-$.when($.ready).then(function(){
-	fetch('js/Data.json',{
-		method:'get'
-	}).then(response => response.json()
-		).then(data =>{
-			let Places = data;
-			function appViewModel(){
+function appViewModel(){
 				let self = this;
 				/*== hide or show the list view ==*/
 				self.toggle = ko.observable(true);
@@ -160,6 +151,26 @@ $.when($.ready).then(function(){
 						}
 					});
 				};
+				/*Error handler*/
+				self.errorHandler = function(errorObject){
+					let msg = '\nThe information about this place can\'t be loaded!\n\n';
+			       			if (errorObject.status === 0){
+			            		msg += 'Not connect. Verify Network.';
+			       	 		} else if (errorObject.status == 404){
+			            		msg += 'Requested page not found. [404]';
+			        		} else if (errorObject.status == 500){
+			            		msg += 'Internal Server Error [500].';
+			        		} else if (errorObject === 'parsererror'){
+			            		msg += 'Requested JSON parse failed.';
+			        		} else if (errorObject === 'timeout'){
+			            		msg += 'Time out error.';
+			        		} else if (errorObject === 'abort'){
+			           	 		msg += 'Ajax request aborted.';
+			        		} else{
+			            		msg += 'Uncaught Error.\n';
+			        		}
+			        alert(msg);
+				};
 				/*== asychronous API Requests to Fousquare API ==*/
 				self.getInfo = function(position,win,mar){
 					win.setMap(null);
@@ -174,10 +185,11 @@ $.when($.ready).then(function(){
 							ll:`${position.lat()},${position.lng()}`,
 							v:'20170801',
 							limit:1
-						},
-						success: function(response,status){
+						}
+					})
+						.done((response,status)=>{
 							if (response.response.venues[0].id){  
-						   	 	/*== Second request to get detailed information with place ID==*/            
+								/*== Second request to get detailed information with place ID==*/            
 								$.ajax({
 									method:'GET',
 									url:'https://api.foursquare.com/v2/venues/'+ response.response.venues[0].id,
@@ -186,8 +198,9 @@ $.when($.ready).then(function(){
 			    						client_secret: '4ESYZKTK124LY5ATDXALNVB024SQILBMELDOQUMXL02ERJW4',
 			    						v:'20170801',
 			    						limit:1
-									},
-									success: function(response,status){
+									}
+								})
+									.done((response,status)=>{
 										let venue = response.response.venue;
 										if (venue.name) {
 											if (venue.url) {
@@ -223,41 +236,29 @@ $.when($.ready).then(function(){
 										content += `<p><img src="img/foursquare.png"><span style="color:blue;font-weight:900;font-size:1.2em;">Foursquare<span><p></div>`;
 										win.setContent(content);
 										win.open(map,mar);
-									},
-									error:function(jqXHR){
-										let msg = 'The information about this place can\'t be loaded!\n\n';
-										msg += jqXHR.responseJSON.meta.errorDetail;
-										alert(msg);
-									}
-								});
+									})
+									.fail(jqXHR=>self.errorHandler(jqXHR));
 							}
-						},
-						error:function(jqXHR,textStatus){
-						 	let msg = 'The information about this place can\'t be loaded!\n\n';
-				       		if (jqXHR.status === 0){
-				            	msg += 'Not connect. Verify Network.';
-				       	 	} else if (jqXHR.status == 404){
-				            	msg += 'Requested page not found. [404]';
-				        	} else if (jqXHR.status == 500){
-				            	msg += 'Internal Server Error [500].';
-				        	} else if (textStatus === 'parsererror'){
-				            	msg += 'Requested JSON parse failed.';
-				        	} else if (textStatus === 'timeout'){
-				            	msg += 'Time out error.';
-				        	} else if (textStatus === 'abort'){
-				           	 msg += 'Ajax request aborted.';
-				        	} else{
-				            	msg += 'Uncaught Error.\n' + jqXHR.responseJSON.meta.errorDetail + textStatus;
-				        	}
-				        	alert(msg);
-						}
-					});
-				};
-			}
+						})
+						.fail(jqXHR=>self.errorHandler(jqXHR));
+				};		
+			};
+
+/*== Try to ensure that this function won't be executed before the google map and DOM is ready as this function depends on google map,
+ but I don't know if I did it correctly==*/
+$.when($.ready).then(function(){
+	fetch('js/Data.json',{
+		method:'get'
+	}).then(response => response.json())
+		.then(data => {
+			let Places = data;
+			
 			const vm = new appViewModel();
 			ko.applyBindings(vm);
-		}).catch(err => {
-			$('nav').append("<p>Oh!Places information can't be fetched!</p>")
+		})
+		.catch(err => {
+			/*I've tried many times, but I still don't know how to use knockout here*/
+			$('nav').append("<p>Oh!Places information can't be fetched!</p>");
 		});
 });
 
