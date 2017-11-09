@@ -257,7 +257,7 @@ $.when($.ready).then(function(){
 			const vm = new appViewModel();
 			ko.applyBindings(vm);
 		}).catch(err => {
-			$(".slide-menu div").text("Oh!Places information can't be fetched!");
+			$('nav').append("<p>Oh!Places information can't be fetched!</p>")
 		});
 });
 
