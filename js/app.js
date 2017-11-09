@@ -38,7 +38,16 @@ function mapError(event){
 	alert(message);
 	console.log(event);
 }	
-function appViewModel(){
+
+/*== Try to ensure that this function won't be executed before the google map and DOM is ready as this function depends on google map,
+ but I don't know if I did it correctly==*/
+$.when($.ready).then(function(){
+	fetch('js/Data.json',{
+		method:'get'
+	}).then(response => response.json())
+		.then(data => {
+			let Places = data;
+			function appViewModel(){
 				let self = this;
 				/*== hide or show the list view ==*/
 				self.toggle = ko.observable(true);
@@ -242,17 +251,7 @@ function appViewModel(){
 						})
 						.fail(jqXHR=>self.errorHandler(jqXHR));
 				};		
-			};
-
-/*== Try to ensure that this function won't be executed before the google map and DOM is ready as this function depends on google map,
- but I don't know if I did it correctly==*/
-$.when($.ready).then(function(){
-	fetch('js/Data.json',{
-		method:'get'
-	}).then(response => response.json())
-		.then(data => {
-			let Places = data;
-			
+			}
 			const vm = new appViewModel();
 			ko.applyBindings(vm);
 		})
