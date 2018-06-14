@@ -1,6 +1,7 @@
 
 import './main.css'
 import foursquare from './img/foursquare.png'
+
 let map, 
 bounds,
 content,
@@ -46,6 +47,7 @@ class appViewModel{
 		})
 		this.defineFilteredLocation=(loc)=>{
 			this.inputPlace(loc.name)
+			google.maps.event.trigger(loc.marker, 'click')
 		}
 	}
 	toggleMenu(){
