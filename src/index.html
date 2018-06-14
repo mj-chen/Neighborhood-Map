@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Neighborhood Map</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="Interesting points around my area">
+	<link href="https://fonts.googleapis.com/css?family=Quicksand:300,700" rel="stylesheet">
+
+</head>
+<body data-bind="css:{'menu-hidden': toggle}">
+	<header>
+		<nav class="navigation">
+			<h2>Greenwich</h2>
+			<span><i class="fa fa-bars fa-lg fa-border" aria-hidden="true" data-bind="click:toggleMenu"></i></span>
+		</nav>
+	</header>
+	<div class="slide-menu">
+		<form class="form">
+			<input type="text" name="place" placeholder="Search a place"  data-bind="textInput: inputPlace">
+			<a class="btn" id="filter" href="#" data-bind="click:zoom">
+				<i class="fa fa-search-plus" aria-hidden="true"></i>Zoom
+			</a>
+		</form>
+		<div >
+			<ul id="list-view" data-bind="foreach:filteredLocations" >
+				<li data-bind="text:$data.name, click:$parent.defineFilteredLocation"></li>
+			</ul>
+		</div>
+	</div>
+	<div id='map'></div>
+
+
+	<script src="https://use.fontawesome.com/7175fcba3a.js"></script>
+	<script 
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6HskZFRH3OIhfHKfvExLJgB4RHXfCGcU&libraries=geometry,drawing,places&v=3&callback=initMap" 
+	    onerror="mapError(event)"  async defer>	
+	</script>
+	
+</body>
+</html>
